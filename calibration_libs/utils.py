@@ -1,0 +1,60 @@
+    
+import cv2
+import numpy as np
+
+#检测棋盘格角点并返回
+def get_chess_corners(img, chess_size, draw_flag=True):
+    """检测棋盘格角点并返回
+    >>> 输入为左右图像、棋盘格大小、是否绘制检测结果默认为True
+    >>> 正常返回值：是否检测到的标志Bool类型; 棋盘角点: shape:(col*row, 1, 2), col约定为标定板长边
+    """
+    draw_img = img.copy()
+    if len(img.shape) == 3:
+        gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+    ret, corners = cv2.findChessboardCorners(img, chess_size, None)
+
+    if(ret):
+        criteria = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+        corners = cv2.cornerSubPix(gray, corners, (11,11), (-1,-1), criteria)
+
+        if draw_flag == True: 
+            cv2.drawChessboardCorners(draw_img, chess_size, corners, ret)
+
+    return ret ,corners, draw_img
+
+def get_chess_corners_world(chessSize=[11, 8], chessCellLen=20):
+    """计算标定板的角点真实坐标
+    >>> 输入 chessSize, 列表，[标定板长边角点数(col)(x), 标定板短边角点数(row)(y)]
+    >>> 输入 chessCellLen, 角点之间距离，单位 mm
+    >>> 输出 numpy, shape: (row*col, 3)
+    """
+    #棋盘格上角点的真实坐标
+    objp = np.zeros((chessSize[0]*chessSize[1],3), np.float32)
+    for i in range(0, chessSize[1]):#row
+        for j in range(0, chessSize[0]): #col
+            point = [j*chessCellLen, i*chessCellLen, 0.]
+            objp[i*chessSize[0]+j][0] = point[0]
+            objp[i*chessSize[0]+j][1] = point[1]
+            objp[i*chessSize[0]+j][2] = point[2]
+    apoints = objp
+
+    return apoints
+
+
+#利用左图上对应的一点以及立体匹配得到的视差计算三维坐标
+def img_to_world_by_dis(pl, dis, Q):
+    """利用左图上对应的一点以及立体匹配得到的视差计算三维坐标
+    >>> 输入： pl[x,y]; dis:double
+    >>> 以行向量形式计算
+    >>> 正常返回值：三维齐次坐标；[[x, y, z, 1]]
+    """
+    img_p = [ 300. ,300. ,32. ,1.]
+    if(len(pl)!=2 ):
+        return []
+    img_p[0] = pl[0]; img_p[1] = pl[1]; img_p[2] = dis
+    img_p = np.array(img_p)
+    img_p.resize(1,4)
+    w = np.dot(img_p ,Q)
+    w = w/w[0][3]
+    return w
