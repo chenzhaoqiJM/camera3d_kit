@@ -59,9 +59,9 @@ class CCameraCalibration:
 
     #从标定文件中读取参数文件
     def from_file_read(self, path):
-        self._leftParameters  = np.load(path + 'left.npy', allow_pickle=True).item()
-        self._rightParameters  = np.load(path + 'right.npy', allow_pickle=True).item()
-        self._stereoCommParameters  = np.load(path + 'comm.npy', allow_pickle=True).item()
+        self._leftParameters  = np.load(os.path.join(path, 'left.npy'), allow_pickle=True).item()
+        self._rightParameters  = np.load(os.path.join(path, 'right.npy'), allow_pickle=True).item()
+        self._stereoCommParameters  = np.load(os.path.join(path, 'comm.npy'), allow_pickle=True).item()
 
     #设置标定文件路径、数量、图像尺寸、标定板大小、单元实际长度
     def set_calibration_images(self, images_path, numbers=10, height=480, width=1280, size=[4,6], length=24.6):
@@ -218,9 +218,9 @@ class CCameraCalibration:
         self._stereoCommParameters["Q"] = Q; self._stereoCommParameters["R"] = R; self._stereoCommParameters["T"] = T
         self._imageSize = imageSize
         #存储参数文件
-        np.save(self.images_path+'left.npy', self._leftParameters)
-        np.save(self.images_path+'right.npy', self._rightParameters)
-        np.save(self.images_path+'comm.npy', self._stereoCommParameters)
+        np.save(os.path.join(self.images_path, 'left.npy'), self._leftParameters)
+        np.save(os.path.join(self.images_path, 'right.npy'), self._rightParameters)
+        np.save(os.path.join(self.images_path, 'comm.npy'), self._stereoCommParameters)
 
     def calc_map_by_matrix(self, left,right ):
         """从左右相机的标定参数字典中获得畸变矫正映射；

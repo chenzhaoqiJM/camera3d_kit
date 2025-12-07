@@ -55,6 +55,23 @@ def img_to_world_by_dis(pl, dis, Q):
     img_p[0] = pl[0]; img_p[1] = pl[1]; img_p[2] = dis
     img_p = np.array(img_p)
     img_p.resize(1,4)
-    w = np.dot(img_p ,Q)
+    w = np.dot(img_p ,Q.T)
     w = w/w[0][3]
     return w
+
+#输入三维坐标计算其在左图中的对应点，输入为列表
+def world_to_img_l(pw, Q):
+    """利用三维坐标计算其在左图中的对应点，
+    >>> 输入为:[x, y, z, 1]
+    >>> 以行向量形式计算
+    >>> 返回值：二维齐次坐标；[[x, y, 视差, 1]]
+    """
+    if(len(pw)!=4):
+        print("输入格式错误")
+        return []
+   
+    w_p = np.array(pw)
+    w_p.resize(1,4)
+    img_p = np.dot(w_p, np.linalg.inv(Q.T))
+    img_p = img_p/img_p[0][3]
+    return img_p
