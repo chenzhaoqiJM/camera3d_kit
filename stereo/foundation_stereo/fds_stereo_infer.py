@@ -9,7 +9,7 @@
 
 import os,sys
 code_dir = os.path.dirname(os.path.realpath(__file__))
-sys.path.append(f'{code_dir}/../')
+sys.path.append(f'{code_dir}/../../thirdparty/FoundationStereo')
 from omegaconf import OmegaConf
 from core.utils.utils import InputPadder
 from Utils import *
@@ -21,7 +21,7 @@ if __name__=="__main__":
   parser = argparse.ArgumentParser()
   parser.add_argument('--left_file', default=f'{code_dir}/../assets/left.png', type=str)
   parser.add_argument('--right_file', default=f'{code_dir}/../assets/right.png', type=str)
-  parser.add_argument('--intrinsic_file', default=f'{code_dir}/../assets/K.txt', type=str, help='camera intrinsic matrix and baseline file')
+  parser.add_argument('--intrinsic_file', default=f'{code_dir}/K.txt', type=str, help='camera intrinsic matrix and baseline file')
   parser.add_argument('--ckpt_dir', default=f'{code_dir}/../pretrained_models/23-51-11/model_best_bp2.pth', type=str, help='pretrained model path')
   parser.add_argument('--out_dir', default=f'{code_dir}/../output/', type=str, help='the directory to save results')
   parser.add_argument('--scale', default=1, type=float, help='downsize the image by scale, must be <=1')
