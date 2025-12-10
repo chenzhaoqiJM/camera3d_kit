@@ -35,6 +35,8 @@ if __name__=="__main__":
   parser.add_argument('--denoise_radius', type=float, default=0.03, help='radius to use for outlier removal')
   args = parser.parse_args()
 
+  print("args------------------------------", args)
+
   set_logging_format()
   set_seed(0)
   torch.autograd.set_grad_enabled(False)
