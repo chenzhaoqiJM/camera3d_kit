@@ -102,3 +102,38 @@ def vis_disparity(disp, min_val=None, max_val=None, invalid_thres=np.inf, color_
   if invalid_mask.any():
     vis[invalid_mask] = 0
   return vis.astype(np.uint8)
+
+def toOpen3dCloud(points,colors=None,normals=None):
+  import open3d as o3d
+  cloud = o3d.geometry.PointCloud()
+  cloud.points = o3d.utility.Vector3dVector(points.astype(np.float64))
+  if colors is not None:
+    if colors.max()>1:
+      colors = colors/255.0
+    cloud.colors = o3d.utility.Vector3dVector(colors.astype(np.float64))
+  if normals is not None:
+    cloud.normals = o3d.utility.Vector3dVector(normals.astype(np.float64))
+  return cloud
+
+
+
+def depth2xyzmap(depth:np.ndarray, K, uvs:np.ndarray=None, zmin=0.1):
+  invalid_mask = (depth<zmin)
+  H,W = depth.shape[:2]
+  if uvs is None:
+    vs,us = np.meshgrid(np.arange(0,H),np.arange(0,W), sparse=False, indexing='ij')
+    vs = vs.reshape(-1)
+    us = us.reshape(-1)
+  else:
+    uvs = uvs.round().astype(int)
+    us = uvs[:,0]
+    vs = uvs[:,1]
+  zs = depth[vs,us]
+  xs = (us-K[0,2])*zs/K[0,0]
+  ys = (vs-K[1,2])*zs/K[1,1]
+  pts = np.stack((xs.reshape(-1),ys.reshape(-1),zs.reshape(-1)), 1)  #(N,3)
+  xyz_map = np.zeros((H,W,3), dtype=np.float32)
+  xyz_map[vs,us] = pts
+  if invalid_mask.any():
+    xyz_map[invalid_mask] = 0
+  return xyz_map
