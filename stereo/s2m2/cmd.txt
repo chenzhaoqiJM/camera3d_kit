@@ -1,0 +1,5 @@
+
+# 使用 model_utils 替换原项目的
+python ./visualize_2d_simple.py --model_type S --num_refine 3
+
+python ./export_onnx.py --model_type S --img_width 640 --img_height 480

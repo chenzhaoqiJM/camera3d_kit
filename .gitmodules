@@ -1,3 +1,6 @@
 [submodule "thirdparty/FoundationStereo"]
 	path = thirdparty/FoundationStereo
 	url = https://github.com/NVlabs/FoundationStereo.git
+[submodule "thirdparty/s2m2"]
+	path = thirdparty/s2m2
+	url = https://github.com/junhong-3dv/s2m2.git
