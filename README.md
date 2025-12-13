@@ -117,6 +117,28 @@ for _point_left, _point_right in zip(_points_src_left, _points_src_right):
 ![](./doc_imgs/sgbm.png)
 
 
+# S2M2 使用
+
+## 使用 onnx 推理
+
+01_s2m2_infer_onnx.ipynb 加载 onnx_models 下的模型推理
+
+## 导出 onnx
+
+```
+python ./export_onnx.py --model_type S --img_width 640 --img_height 480
+```
+
+模型路径、图片路径在 export_onnx.py 里面修改
+
+## pytorch 推理
+
+使用 visualize_2d_simple.py
+
+模型路径、图片路径在 visualize_2d_simple.py 里面修改
+
+
+
 # FoundationStereo使用
 参考：https://github.com/NVlabs/FoundationStereo/tree/master?tab=readme-ov-file
 
@@ -126,9 +148,15 @@ conda run -n foundation_stereo pip install flash-attn
 conda activate foundation_stereo
 ```
 
-使用之前得到的校正图像快速验证
 
-切换到 stereo\foundation_stereo 目录
+cpu 使用安装 requirements_fds.txt 即可
+
+
+模型参考官网下载即可
+
+## 快速验证
+
+使用之前得到的校正图像快速验证
 
 先安装必要包：
 
@@ -136,11 +164,34 @@ conda activate foundation_stereo
 pip install -r requirements_fds.txt
 ```
 
-模型参考官网下载即可
-
+切换到 stereo\foundation_stereo 目录
 ```
 python fds_stereo_infer.py --left_file ../calibration/imgs_left_rectify/WIN_20251207_14_54_12_Pro.png --right_file ../calibration/imgs_right_rectify/WIN_20251207_14_54_12_Pro.png --ckpt_dir ../../../pretrained_models/23-51-11/model_best_bp2.pth --out_dir ./test_outputs/
 ```
+
+视差图被保存到 test_outputs\disp.npy
+
+
+使用 fds_stereo_quick_verify.ipynb 脚本验证视差的正确性。
+
+
+## pytorch 推理
+
+使用 fds_stereo_infer.ipynb 进行全流程推理
+
+## 导出 onnx
+
+使用 make_onnx.py 脚本
+
+```
+python make_onnx.py --save_path ./pretrained_models/foundation_stereo_small.onnx --ckpt_dir ../../../pretrained_models/11-33-40/model_best_bp2.pth --height 480 --width 640 --valid_iters 20
+```
+
+## 使用 onnx
+
+使用 fds_stereo_onnx_infer.ipynb 进行推理
+
+info_onnx.ipynb 用于打印模型输入输出信息
 
 
 
